@@ -175,7 +175,7 @@ pub fn Rope(T: type, max_chunk_len: comptime_int) type {
         }
 
         /// Uses `sliceAlloc` then prints the result and frees the slice. (*should be used only for debugging*)
-        pub fn print(self: *const @This()) Allocator.Error!void {
+        pub fn debugPrint(self: *const @This()) Allocator.Error!void {
             const slice = try self.sliceAlloc(self.allocator);
             defer self.allocator.free(slice);
 

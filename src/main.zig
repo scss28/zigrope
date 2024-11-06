@@ -11,11 +11,11 @@ pub fn main() !void {
     defer rope.deinit();
 
     try rope.append("world!");
-    try rope.print();
+    try rope.debugPrint();
 
     try rope.remove(4, 3);
     try rope.insert(4, " ");
-    try rope.print();
+    try rope.debugPrint();
 }
 
 test {
