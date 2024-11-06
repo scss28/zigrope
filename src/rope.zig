@@ -32,14 +32,14 @@ pub fn Rope(T: type, max_chunk_len: comptime_int) type {
                 };
             }
 
-            var rope = try @This().initSlice(allocator, slice[0 .. slice.len / 2]);
-            errdefer rope.deinit();
+            var self = try @This().initSlice(allocator, slice[0 .. slice.len / 2]);
+            errdefer self.deinit();
 
             const rhs = try @This().initSlice(allocator, slice[slice.len / 2 ..]);
             errdefer rhs.deinit();
 
-            try rope.append(rhs);
-            return rope;
+            try self.append(rhs);
+            return self;
         }
 
         /// Free all the memory owned by this rope.
@@ -54,10 +54,6 @@ pub fn Rope(T: type, max_chunk_len: comptime_int) type {
                 self.allocator.destroy(rhs);
             }
         }
-
-        // /// Concatenates two ropes.
-        // pub fn concat(lhs: @This(), rhs: @This()) Allocator.Error!@This() {
-        // }
 
         /// Returns the length of all elements of the rope.
         pub fn len(self: @This()) usize {
@@ -91,6 +87,7 @@ pub fn Rope(T: type, max_chunk_len: comptime_int) type {
                     self.rhs.?.* = rhs;
 
                     self.lhs = lhs;
+                    self.weight = lhs.len();
                     self.chunk.clear();
                 },
                 inline else => @compileError("Expected slice type or Rope, found '" ++ @typeName(RhsType) ++ "'"),
@@ -108,8 +105,10 @@ pub fn Rope(T: type, max_chunk_len: comptime_int) type {
                     try self.prepend(rope);
                 },
                 .@"struct" => {
-                    try @constCast(&lhs).append(self.*);
-                    self.* = lhs;
+                    var new_self = lhs;
+                    try new_self.append(self.*);
+
+                    self.* = new_self;
                 },
                 inline else => @compileError("Expected slice type or Rope, found '" ++ @typeName(LhsType) ++ "'"),
             }
@@ -138,6 +137,8 @@ pub fn Rope(T: type, max_chunk_len: comptime_int) type {
                     .chunk = .{},
                 };
             }
+
+            if (index > self.weight) return SplitError.IndexOutOfRange;
 
             var right_chunk: std.BoundedArray(T, max_chunk_len) = .{};
             right_chunk.appendSlice(self.chunk.slice()[index..]) catch unreachable;
