@@ -2,7 +2,7 @@
 # zigrope
 A zig [rope (data structure)](https://en.wikipedia.org/wiki/Rope_(data_structure)) implementation.
 # Examples
-- 'Hello world!'
+- 'Hello, world!'
 ```zig
 const StringRope = @import("rope.zig").StringRope;
 
