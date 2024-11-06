@@ -66,6 +66,7 @@ pub fn Rope(T: type, max_chunk_len: comptime_int) type {
         }
 
         /// Appends the rope with `rhs`.
+        /// `rhs` - `[]const u8` or a rope
         pub fn append(self: *@This(), rhs: anytype) Allocator.Error!void {
             const RhsType = @TypeOf(rhs);
             switch (@typeInfo(RhsType)) {
@@ -95,6 +96,7 @@ pub fn Rope(T: type, max_chunk_len: comptime_int) type {
         }
 
         /// Prepends the rope with `lhs`.
+        /// `lhs` - `[]const u8` or a rope
         pub fn prepend(self: *@This(), lhs: anytype) Allocator.Error!void {
             const LhsType = @TypeOf(lhs);
             switch (@typeInfo(LhsType)) {
